@@ -38,7 +38,7 @@ services:
     image: nginxproxy/acme-companion
     container_name: acme-companion  # Optional, but good for consistency
     environment:
-      - DEFAULT_EMAIL=${default_email}  #Replace with your REAL email here
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}  #Replace with your REAL email here
       - NGINX_PROXY_CONTAINER=nginx-proxy  # Points to the container name above
     volumes_from:
       - nginx-proxy
