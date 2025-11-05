@@ -5,8 +5,49 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     environment:
       NODE_ENV: production
-      API_KEY: ${API_KEY}
+      SKRYBIT_API_KEY: ${SKRYBIT_API_KEY}
+      VIRTUAL_HOST: mint.degent.club
+      LETSENCRYPT_HOST: mint.degent.club
+      # Optional: Add your email for Let's Encrypt notifications
+      # LETSENCRYPT_EMAIL: your.actual.email@domain.com  # Uncomment and use a real email if you want per-container overrides
+    expose:
+      - "3000"  # Expose to other containers, but not to host
+    networks:
+      - proxy-net
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy  # Added this to fix container ID detection
+    labels:
+      - "com.github.nginx-proxy.nginx"  # Added label as fallback for detection
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./html:/usr/share/nginx/html
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./conf:/etc/nginx/conf.d
+    networks:
+      - proxy-net
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: acme-companion  # Optional, but good for consistency
+    environment:
+      - DEFAULT_EMAIL=${default_email}  #Replace with your REAL email here
+      - NGINX_PROXY_CONTAINER=nginx-proxy  # Points to the container name above
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./acme:/etc/acme.sh
+    networks:
+      - proxy-net
+
+networks:
+  proxy-net:
+    driver: bridge
