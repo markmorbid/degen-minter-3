@@ -45,7 +45,10 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
     }
   };
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {  
+    if (window.unisat) {
+      await window.unisat.disconnect();  
+    }
     setAddress(null);
     onDisconnect();
   };
