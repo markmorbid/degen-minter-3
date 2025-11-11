@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import WalletConnect from '@/components/WalletConnect';
 import AIInstructions from '@/components/AIInstructions';
 import FileUpload from '@/components/FileUpload';
@@ -15,12 +16,54 @@ export default function Home() {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [compressedFile, setCompressedFile] = useState<File | null>(null);
   const [feeRate, setFeeRate] = useState(1);
+  const [calculatingFeeRate, setCalculatingFeeRate] = useState<number | null>(null);
+  const [isPendingCalculation, setIsPendingCalculation] = useState(false);
   const [inscriptionData, setInscriptionData] = useState<InscriptionResponse | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [txid, setTxid] = useState<string | null>(null);
   const [hasCalculated, setHasCalculated] = useState(false);
+  
+  // Track the current fee rate to prevent race conditions
+  const currentFeeRateRef = useRef(feeRate);
+  // Track if we need to recalculate after current calculation finishes
+  const needsRecalculationRef = useRef(false);
+  // AbortController to cancel in-flight requests
+  const abortControllerRef = useRef<AbortController | null>(null);
+  // Debounce timer for fee rate changes
+  const feeRateDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-calculate when file becomes valid or fee rate changes
+  // Debounce fee rate changes - wait 1 second after user stops changing before calculating
+  useEffect(() => {
+    const feeRateChanged = currentFeeRateRef.current !== feeRate;
+    currentFeeRateRef.current = feeRate;
+    
+    // If fee rate changed, reset hasCalculated and clear any existing debounce timer
+    if (feeRateChanged) {
+      setHasCalculated(false);
+      
+      // Clear existing debounce timer
+      if (feeRateDebounceTimerRef.current) {
+        clearTimeout(feeRateDebounceTimerRef.current);
+      }
+      
+      // If currently calculating, abort it
+      if (isCalculating) {
+        console.log('Fee rate changed during calculation - aborting current request');
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      }
+    }
+    
+    // Cleanup function to clear timer on unmount
+    return () => {
+      if (feeRateDebounceTimerRef.current) {
+        clearTimeout(feeRateDebounceTimerRef.current);
+      }
+    };
+  }, [feeRate, isCalculating]);
+
+  // Auto-calculate when file becomes valid or fee rate changes (with debounce for fee rate)
   useEffect(() => {
     const shouldCalculate = 
       walletAddress &&
@@ -30,31 +73,92 @@ export default function Home() {
       !hasCalculated;
 
     if (shouldCalculate) {
-      handleCalculate();
+      // Clear any existing debounce timer
+      if (feeRateDebounceTimerRef.current) {
+        clearTimeout(feeRateDebounceTimerRef.current);
+      }
+      
+      // Show calculating state immediately
+      setIsPendingCalculation(true);
+      setCalculatingFeeRate(feeRate);
+      
+      // Wait 1 second before calculating (debounce)
+      feeRateDebounceTimerRef.current = setTimeout(() => {
+        // Don't set isPendingCalculation to false here - handleCalculate will do it
+        // This prevents a gap where neither isPendingCalculation nor isCalculating is true
+        handleCalculate();
+      }, 1000);
     }
-  }, [walletAddress, compressedFile, feeRate, hasCalculated]);
+    
+    // Cleanup function
+    return () => {
+      if (feeRateDebounceTimerRef.current) {
+        clearTimeout(feeRateDebounceTimerRef.current);
+      }
+    };
+  }, [walletAddress, compressedFile, feeRate, hasCalculated, isCalculating]);
 
   const handleCalculate = async () => {
     if (!walletAddress || !compressedFile) return;
 
+    // Capture the fee rate at the start of this calculation
+    const calculationFeeRate = feeRate;
+    
+    // Create a new AbortController for this request
+    abortControllerRef.current = new AbortController();
+    
+    // Set isCalculating and clear isPendingCalculation atomically
     setIsCalculating(true);
+    setIsPendingCalculation(false);
+    setCalculatingFeeRate(calculationFeeRate);
     setInscriptionData(null);
 
     try {
       const data = await createInscriptionCommit(
         compressedFile,
         walletAddress, // recipient
-        feeRate,
-        walletAddress  // sender
+        calculationFeeRate,
+        walletAddress,  // sender
+        abortControllerRef.current.signal
       );
 
-      setInscriptionData(data);
-      setHasCalculated(true);
-    } catch (error) {
-      console.error('Calculation failed:', error);
-      alert('Failed to calculate inscription cost. Please try again.');
+      // Only update state if the fee rate hasn't changed during the calculation
+      if (currentFeeRateRef.current === calculationFeeRate) {
+        setInscriptionData(data);
+        setHasCalculated(true);
+        needsRecalculationRef.current = false;
+      } else {
+        // Fee rate changed, ignore this stale result
+        console.log('Ignoring stale calculation result - fee rate changed');
+        // Don't mark as calculated so it will recalculate
+        setHasCalculated(false);
+      }
+    } catch (error: any) {
+      // Don't show error if request was aborted (user changed fee rate)
+      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+        console.log('Calculation aborted - fee rate changed');
+        return;
+      }
+      
+      // Only show error if this calculation is still relevant
+      if (currentFeeRateRef.current === calculationFeeRate) {
+        console.error('Calculation failed:', error);
+        alert('Failed to calculate inscription cost. Please try again.');
+      }
     } finally {
       setIsCalculating(false);
+      
+      // If fee rate changed during calculation, keep showing calculating state
+      if (needsRecalculationRef.current) {
+        needsRecalculationRef.current = false;
+        setHasCalculated(false);
+        // Keep isPendingCalculation true and don't clear calculatingFeeRate
+        // The new calculation will update these
+      } else {
+        // Only clear if we're not recalculating
+        setIsPendingCalculation(false);
+        setCalculatingFeeRate(null);
+      }
     }
   };
 
@@ -92,10 +196,20 @@ export default function Home() {
   };
 
   const handleFeeRateChange = (rate: number) => {
-    setFeeRate(rate);
-    // Reset calculation when fee rate changes
-    setInscriptionData(null);
-    setHasCalculated(false);
+    // Use flushSync to ensure immediate synchronous updates
+    flushSync(() => {
+      setFeeRate(rate);
+      // Reset calculation when fee rate changes
+      setInscriptionData(null);
+      
+      // Show calculating state immediately (synchronously)
+      if (walletAddress && compressedFile && isFileSizeValid(compressedFile.size)) {
+        setIsPendingCalculation(true);
+        setCalculatingFeeRate(rate);
+      }
+    });
+    
+    // hasCalculated will be reset by the useEffect
   };
 
   const fileIsValid = compressedFile ? isFileSizeValid(compressedFile.size) : false;
@@ -131,10 +245,10 @@ export default function Home() {
             onCompressedFile={handleCompressedFile}
           />
 
-          {isCalculating && (
+          {(isCalculating || isPendingCalculation) && calculatingFeeRate !== null && (
             <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-center">
               <div className="text-bitcoin text-xl animate-pulse">
-                ⏳ Calculating inscription cost...
+                ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
               </div>
             </div>
           )}
@@ -145,6 +259,7 @@ export default function Home() {
             isFileSizeValid={fileIsValid}
             inscriptionData={inscriptionData}
             onMintSuccess={handleMintSuccess}
+            isCalculating={isCalculating || isPendingCalculation}
           />
 
           <StatusDisplay
