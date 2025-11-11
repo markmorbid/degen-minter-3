@@ -11,6 +11,15 @@ export default function StatusDisplay({
   feeRate, 
   onFeeRateChange 
 }: StatusDisplayProps) {
+  const handleFeeRateChange = (value: number) => {
+    // Enforce minimum of 0.1 sats/vb
+    if (value < 0.1) {
+      onFeeRateChange(0.1);
+    } else {
+      onFeeRateChange(value);
+    }
+  };
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-white">⚙️ Settings</h2>
@@ -23,13 +32,20 @@ export default function StatusDisplay({
           <input
             type="number"
             value={feeRate}
-            onChange={(e) => onFeeRateChange(Number(e.target.value))}
+            onChange={(e) => handleFeeRateChange(Number(e.target.value))}
+            onBlur={(e) => {
+              // Enforce minimum on blur as well
+              const value = Number(e.target.value);
+              if (value < 0.1) {
+                handleFeeRateChange(0.1);
+              }
+            }}
             min="0.1"
             step="0.1"
             className="w-full bg-gray-900 text-white px-4 py-2 rounded border border-gray-700 focus:border-bitcoin focus:outline-none"
           />
           <p className="text-gray-500 text-xs mt-1">
-            Higher fee rates result in faster confirmation times
+            Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
           </p>
         </div>
 

@@ -10,7 +10,8 @@ export const createInscriptionCommit = async (
   file: File,
   recipientAddress: string,
   feeRate: number,
-  senderAddress: string
+  senderAddress: string,
+  signal?: AbortSignal
 ): Promise<InscriptionResponse> => {
   try {
     const formData = new FormData();
@@ -26,6 +27,7 @@ export const createInscriptionCommit = async (
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        signal,
       }
     );
 

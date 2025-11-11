@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { sendBitcoin } from '@/lib/wallet';
 
 interface MintButtonProps {
@@ -12,6 +12,11 @@ interface MintButtonProps {
     required_amount_in_sats: string;
   } | null;
   onMintSuccess: (txid: string) => void;
+  isCalculating?: boolean;
+  feeRate: number;
+  onFeeRateChange: (rate: number) => void;
+  txid: string | null;
+  calculatingFeeRate: number | null;
 }
 
 export default function MintButton({
@@ -20,9 +25,30 @@ export default function MintButton({
   isFileSizeValid,
   inscriptionData,
   onMintSuccess,
+  isCalculating = false,
+  feeRate,
+  onFeeRateChange,
+  txid,
+  calculatingFeeRate,
 }: MintButtonProps) {
   const [isMinting, setIsMinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Clear error when calculation starts
+  useEffect(() => {
+    if (isCalculating) {
+      setError(null);
+    }
+  }, [isCalculating]);
+
+  const handleFeeRateChange = (value: number) => {
+    // Enforce minimum of 0.1 sats/vb
+    if (value < 0.1) {
+      onFeeRateChange(0.1);
+    } else {
+      onFeeRateChange(value);
+    }
+  };
 
   const isEnabled = 
     walletAddress && 
@@ -35,7 +61,7 @@ export default function MintButton({
     if (!walletAddress) return 'Connect wallet to continue';
     if (!compressedFile) return 'Please upload an image file';
     if (!isFileSizeValid) return 'File must be 200kb-400kb';
-    if (!inscriptionData) return 'Calculating...';
+    if (!inscriptionData && !isCalculating) return 'Calculating...';
     return '';
   };
 
@@ -65,6 +91,34 @@ export default function MintButton({
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-white">🚀 Mint Inscription</h2>
+      
+      {/* Fee Rate Input */}
+      <div className="mb-4">
+        <label className="block text-gray-400 text-sm mb-2">
+          Fee Rate (sats/vbyte)
+        </label>
+        <input
+          type="number"
+          value={feeRate}
+          onChange={(e) => handleFeeRateChange(Number(e.target.value))}
+          onBlur={(e) => {
+            // Enforce minimum on blur as well
+            const value = Number(e.target.value);
+            if (value < 0.1) {
+              handleFeeRateChange(0.1);
+            }
+          }}
+          min="0.1"
+          step="0.1"
+          className="w-full bg-gray-900 text-white px-4 py-2 rounded border border-gray-700 focus:border-bitcoin focus:outline-none"
+        />
+        <p className="text-gray-500 text-xs mt-1">
+          Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
+        </p>
+      </div>
+
+      {/* Mint Button */}
       <button
         onClick={handleMint}
         disabled={!isEnabled}
@@ -104,6 +158,31 @@ export default function MintButton({
             <p className="text-white font-mono text-xs bg-gray-900 p-2 rounded break-all">
               {inscriptionData.payment_address}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Transaction Success */}
+      {txid && (
+        <div className="mt-4 pt-4 border-t border-gray-700">
+          <h3 className="text-white font-semibold mb-2">✅ Transaction Sent!</h3>
+          <div>
+            <p className="text-gray-400 text-sm mb-1">Transaction ID:</p>
+            <p className="text-green-400 font-mono text-xs bg-gray-900 p-2 rounded break-all">
+              {txid}
+            </p>
+          </div>
+          <p className="text-gray-400 text-sm mt-3">
+            Your inscription will be created once the transaction is confirmed on the blockchain.
+          </p>
+        </div>
+      )}
+
+      {/* Calculating Status */}
+      {isCalculating && calculatingFeeRate !== null && (
+        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+          <div className="text-bitcoin text-lg animate-pulse">
+            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
           </div>
         </div>
       )}
