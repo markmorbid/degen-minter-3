@@ -7,6 +7,7 @@ import AIInstructions from '@/components/AIInstructions';
 import FileUpload from '@/components/FileUpload';
 import FileValidation from '@/components/FileValidation';
 import MintButton from '@/components/MintButton';
+import StatusDisplay from '@/components/StatusDisplay';
 import { createInscriptionCommit, isFileSizeValid } from '@/lib/api';
 import type { InscriptionResponse } from '@/lib/api';
 
@@ -244,6 +245,14 @@ export default function Home() {
             onCompressedFile={handleCompressedFile}
           />
 
+          {(isCalculating || isPendingCalculation) && calculatingFeeRate !== null && (
+            <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-center">
+              <div className="text-bitcoin text-xl animate-pulse">
+                ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
+              </div>
+            </div>
+          )}
+
           <MintButton
             walletAddress={walletAddress}
             compressedFile={compressedFile}
@@ -251,10 +260,12 @@ export default function Home() {
             inscriptionData={inscriptionData}
             onMintSuccess={handleMintSuccess}
             isCalculating={isCalculating || isPendingCalculation}
+          />
+
+          <StatusDisplay
+            txid={txid}
             feeRate={feeRate}
             onFeeRateChange={handleFeeRateChange}
-            txid={txid}
-            calculatingFeeRate={calculatingFeeRate}
           />
         </div>
 
