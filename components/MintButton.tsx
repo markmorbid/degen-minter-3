@@ -13,6 +13,7 @@ interface MintButtonProps {
   } | null;
   onMintSuccess: (txid: string) => void;
   isCalculating?: boolean;
+  calculatingFeeRate?: number | null;
 }
 
 export default function MintButton({
@@ -22,14 +23,15 @@ export default function MintButton({
   inscriptionData,
   onMintSuccess,
   isCalculating = false,
+  calculatingFeeRate = null,
 }: MintButtonProps) {
   const [isMinting, setIsMinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isEnabled = 
-    walletAddress && 
-    compressedFile && 
-    isFileSizeValid && 
+  const isEnabled =
+    walletAddress &&
+    compressedFile &&
+    isFileSizeValid &&
     inscriptionData &&
     !isMinting;
 
@@ -50,7 +52,7 @@ export default function MintButton({
     try {
       // CRITICAL: Convert to integer to prevent "0.00000000 BTC" error
       const amountInSats = parseInt(inscriptionData.required_amount_in_sats);
-      
+
       const txid = await sendBitcoin(
         inscriptionData.payment_address,
         amountInSats
@@ -109,10 +111,7 @@ export default function MintButton({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-      {/* Calculating Status */}
+
       {isCalculating && calculatingFeeRate !== null && (
         <div className="mt-4 pt-4 border-t border-gray-700 text-center">
           <div className="text-bitcoin text-lg animate-pulse">

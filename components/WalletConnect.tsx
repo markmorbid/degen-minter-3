@@ -23,7 +23,7 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
       }
     };
     checkConnection();
-  }, []);
+  }, [onConnect]);
 
   const handleConnect = async () => {
     if (!isWalletInstalled()) {
@@ -45,10 +45,17 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
     }
   };
 
-  const handleDisconnect = async () => {  
-    if (window.unisat) {
-      await window.unisat.disconnect();  
+  const handleDisconnect = async () => {
+    if (window.unisat && typeof window.unisat.disconnect === 'function') {
+      try {
+        await window.unisat.disconnect();
+      } catch (err) {
+        console.warn('Failed to disconnect UniSat wallet:', err);
+      }
+    } else {
+      console.warn('No disconnect method found on UniSat wallet');
     }
+
     setAddress(null);
     onDisconnect();
   };

@@ -6,6 +6,7 @@ declare global {
       requestAccounts: () => Promise<string[]>;
       getAccounts: () => Promise<string[]>;
       sendBitcoin: (address: string, amount: number) => Promise<string>;
+      disconnect?: () => Promise<void>;
       on: (event: string, handler: () => void) => void;
       removeListener: (event: string, handler: () => void) => void;
     };
