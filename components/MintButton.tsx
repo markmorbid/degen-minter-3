@@ -12,6 +12,8 @@ interface MintButtonProps {
     required_amount_in_sats: string;
   } | null;
   onMintSuccess: (txid: string) => void;
+  isCalculating?: boolean;
+  calculatingFeeRate?: number | null;
 }
 
 export default function MintButton({
@@ -20,14 +22,16 @@ export default function MintButton({
   isFileSizeValid,
   inscriptionData,
   onMintSuccess,
+  isCalculating = false,
+  calculatingFeeRate = null,
 }: MintButtonProps) {
   const [isMinting, setIsMinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isEnabled = 
-    walletAddress && 
-    compressedFile && 
-    isFileSizeValid && 
+  const isEnabled =
+    walletAddress &&
+    compressedFile &&
+    isFileSizeValid &&
     inscriptionData &&
     !isMinting;
 
@@ -35,7 +39,7 @@ export default function MintButton({
     if (!walletAddress) return 'Connect wallet to continue';
     if (!compressedFile) return 'Please upload an image file';
     if (!isFileSizeValid) return 'File must be 200kb-400kb';
-    if (!inscriptionData) return 'Calculating...';
+    if (!inscriptionData && !isCalculating) return 'Calculating...';
     return '';
   };
 
@@ -48,7 +52,7 @@ export default function MintButton({
     try {
       // CRITICAL: Convert to integer to prevent "0.00000000 BTC" error
       const amountInSats = parseInt(inscriptionData.required_amount_in_sats);
-      
+
       const txid = await sendBitcoin(
         inscriptionData.payment_address,
         amountInSats
@@ -104,6 +108,14 @@ export default function MintButton({
             <p className="text-white font-mono text-xs bg-gray-900 p-2 rounded break-all">
               {inscriptionData.payment_address}
             </p>
+          </div>
+        </div>
+      )}
+
+      {isCalculating && calculatingFeeRate !== null && (
+        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+          <div className="text-bitcoin text-lg animate-pulse">
+            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
           </div>
         </div>
       )}
