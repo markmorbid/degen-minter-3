@@ -200,7 +200,9 @@ export default function Home() {
   };
 
   const handleFeeRateChange = (rate: number) => {
-    setFeeRate(rate);
+    const minFeeRate = 0.13;
+    const validatedRate = rate < minFeeRate ? minFeeRate : rate;
+    setFeeRate(validatedRate);
     // hasCalculated will be reset by the useEffect
     // Note: We don't clear inscriptionData here to avoid flickering
     // It will be updated when the new calculation completes
