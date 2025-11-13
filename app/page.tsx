@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { flushSync } from 'react-dom';
 import WalletConnect from '@/components/WalletConnect';
 import AIInstructions from '@/components/AIInstructions';
 import FileUpload from '@/components/FileUpload';
@@ -41,6 +40,12 @@ export default function Home() {
     if (feeRateChanged) {
       setHasCalculated(false);
       
+      // Keep calculating state visible if conditions are met
+      if (walletAddress && compressedFile && isFileSizeValid(compressedFile.size)) {
+        setIsPendingCalculation(true);
+        setCalculatingFeeRate(feeRate);
+      }
+      
       // Clear existing debounce timer
       if (feeRateDebounceTimerRef.current) {
         clearTimeout(feeRateDebounceTimerRef.current);
@@ -61,7 +66,7 @@ export default function Home() {
         clearTimeout(feeRateDebounceTimerRef.current);
       }
     };
-  }, [feeRate, isCalculating]);
+  }, [feeRate, isCalculating, walletAddress, compressedFile]);
 
   // Auto-calculate when file becomes valid or fee rate changes (with debounce for fee rate)
   useEffect(() => {
@@ -148,16 +153,15 @@ export default function Home() {
     } finally {
       setIsCalculating(false);
       
-      // If fee rate changed during calculation, keep showing calculating state
-      if (needsRecalculationRef.current) {
-        needsRecalculationRef.current = false;
-        setHasCalculated(false);
-        // Keep isPendingCalculation true and don't clear calculatingFeeRate
-        // The new calculation will update these
-      } else {
-        // Only clear if we're not recalculating
+      // Only clear calculating state if the fee rate hasn't changed
+      if (currentFeeRateRef.current === calculationFeeRate) {
+        // Fee rate is still the same, clear calculating state
         setIsPendingCalculation(false);
         setCalculatingFeeRate(null);
+      } else {
+        // Fee rate changed, keep showing calculating state for the new rate
+        // Don't clear isPendingCalculation or calculatingFeeRate
+        setHasCalculated(false);
       }
     }
   };
@@ -196,20 +200,10 @@ export default function Home() {
   };
 
   const handleFeeRateChange = (rate: number) => {
-    // Use flushSync to ensure immediate synchronous updates
-    flushSync(() => {
-      setFeeRate(rate);
-      // Reset calculation when fee rate changes
-      setInscriptionData(null);
-      
-      // Show calculating state immediately (synchronously)
-      if (walletAddress && compressedFile && isFileSizeValid(compressedFile.size)) {
-        setIsPendingCalculation(true);
-        setCalculatingFeeRate(rate);
-      }
-    });
-    
+    setFeeRate(rate);
     // hasCalculated will be reset by the useEffect
+    // Note: We don't clear inscriptionData here to avoid flickering
+    // It will be updated when the new calculation completes
   };
 
   const fileIsValid = compressedFile ? isFileSizeValid(compressedFile.size) : false;
@@ -219,12 +213,34 @@ export default function Home() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
-            🎨 Degen Minter
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Create Bitcoin Ordinals Inscriptions
-          </p>
+          <a 
+            href="https://degent.club" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-3 mb-2 hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src="/icon.jpg" 
+              alt="Degen Icon" 
+              className="w-12 h-12 md:w-16 md:h-16 rounded-lg"
+            />
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
+              Degen Minter
+            </h1>
+            <img 
+              src="/icon_flipped.jpg" 
+              alt="Degen Icon" 
+              className="w-12 h-12 md:w-16 md:h-16 rounded-lg"
+            />
+          </a>
+          <a 
+            href="https://degent.club" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-300 text-lg hover:text-bitcoin transition-colors"
+          >
+            by Degent Club
+          </a>
         </div>
 
         {/* Main Content - Single Column */}
@@ -245,14 +261,6 @@ export default function Home() {
             onCompressedFile={handleCompressedFile}
           />
 
-          {(isCalculating || isPendingCalculation) && calculatingFeeRate !== null && (
-            <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-center">
-              <div className="text-bitcoin text-xl animate-pulse">
-                ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
-              </div>
-            </div>
-          )}
-
           <MintButton
             walletAddress={walletAddress}
             compressedFile={compressedFile}
@@ -260,12 +268,13 @@ export default function Home() {
             inscriptionData={inscriptionData}
             onMintSuccess={handleMintSuccess}
             isCalculating={isCalculating || isPendingCalculation}
+            calculatingFeeRate={calculatingFeeRate}
+            feeRate={feeRate}
+            onFeeRateChange={handleFeeRateChange}
           />
 
           <StatusDisplay
             txid={txid}
-            feeRate={feeRate}
-            onFeeRateChange={handleFeeRateChange}
           />
         </div>
 

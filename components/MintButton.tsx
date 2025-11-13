@@ -14,6 +14,8 @@ interface MintButtonProps {
   onMintSuccess: (txid: string) => void;
   isCalculating?: boolean;
   calculatingFeeRate?: number | null;
+  feeRate: number;
+  onFeeRateChange: (rate: number) => void;
 }
 
 export default function MintButton({
@@ -24,9 +26,20 @@ export default function MintButton({
   onMintSuccess,
   isCalculating = false,
   calculatingFeeRate = null,
+  feeRate,
+  onFeeRateChange,
 }: MintButtonProps) {
   const [isMinting, setIsMinting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleFeeRateChange = (value: number) => {
+    // Enforce minimum of 0.1 sats/vb
+    if (value < 0.1) {
+      onFeeRateChange(0.1);
+    } else {
+      onFeeRateChange(value);
+    }
+  };
 
   const isEnabled =
     walletAddress &&
@@ -69,6 +82,32 @@ export default function MintButton({
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+      {/* Fee Rate Input */}
+      <div className="mb-6">
+        <label className="block text-gray-400 text-sm mb-2">
+          Fee Rate (sats/vbyte)
+        </label>
+        <input
+          type="number"
+          value={feeRate}
+          onChange={(e) => handleFeeRateChange(Number(e.target.value))}
+          onBlur={(e) => {
+            // Enforce minimum on blur as well
+            const value = Number(e.target.value);
+            if (value < 0.1) {
+              handleFeeRateChange(0.1);
+            }
+          }}
+          min="0.1"
+          step="0.1"
+          className="w-full bg-gray-900 text-white px-4 py-2 rounded border border-gray-700 focus:border-bitcoin focus:outline-none"
+        />
+        <p className="text-gray-500 text-xs mt-1">
+          Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
+        </p>
+      </div>
+
+      {/* Mint Button */}
       <button
         onClick={handleMint}
         disabled={!isEnabled}
@@ -95,7 +134,13 @@ export default function MintButton({
         </div>
       )}
 
-      {inscriptionData && (
+      {isCalculating && calculatingFeeRate !== null ? (
+        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+          <div className="text-bitcoin text-lg animate-pulse">
+            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
+          </div>
+        </div>
+      ) : inscriptionData ? (
         <div className="mt-4 pt-4 border-t border-gray-700 space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-400">Required Amount:</span>
@@ -110,15 +155,7 @@ export default function MintButton({
             </p>
           </div>
         </div>
-      )}
-
-      {isCalculating && calculatingFeeRate !== null && (
-        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
-          <div className="text-bitcoin text-lg animate-pulse">
-            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
-          </div>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

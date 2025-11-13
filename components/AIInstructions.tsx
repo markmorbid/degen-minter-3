@@ -3,8 +3,8 @@
 export default function AIInstructions() {
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = '/7.jpg';
-    link.download = '7.jpg';
+    link.href = '/Degen.jpg';
+    link.download = 'Degen.jpg';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -12,7 +12,7 @@ export default function AIInstructions() {
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🎨 Create Your Degent Image</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🎨 Create Your Decentralized Gentleman 🎨</h2>
       
       <div className="space-y-4 text-gray-300">
         <div>
@@ -36,7 +36,7 @@ export default function AIInstructions() {
         <div className="flex items-center gap-4 pt-2">
           <div className="flex-shrink-0">
             <img 
-              src="/7.jpg" 
+              src="/Degen.jpg" 
               alt="Sample Degent" 
               className="w-48 h-48 rounded-lg border-2 border-blue-500 object-cover"
             />
@@ -49,7 +49,7 @@ export default function AIInstructions() {
               onClick={handleDownload}
               className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
             >
-              📥 Download Sample (7.jpg)
+              📥 Download Sample (Degen.jpg)
             </button>
           </div>
         </div>
