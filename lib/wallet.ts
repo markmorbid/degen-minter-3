@@ -59,7 +59,18 @@ export const sendBitcoin = async (
   try {
     // CRITICAL: Convert to integer to prevent "0.00000000 BTC" error
     const amount = parseInt(amountInSats.toString());
+    
+    // Validate the amount is a valid positive integer
+    if (isNaN(amount) || amount <= 0) {
+      throw new Error(
+        `Invalid Bitcoin amount: ${amountInSats}. ` +
+        'Amount must be a positive integer in satoshis.'
+      );
+    }
+
+    console.log('UniSat sendBitcoin called with:', { address, amount });
     const txid = await window.unisat!.sendBitcoin(address, amount);
+    console.log('Transaction successful:', txid);
     return txid;
   } catch (error) {
     console.error('Failed to send Bitcoin:', error);

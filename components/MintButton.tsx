@@ -66,6 +66,20 @@ export default function MintButton({
       // CRITICAL: Convert to integer to prevent "0.00000000 BTC" error
       const amountInSats = parseInt(inscriptionData.required_amount_in_sats);
 
+      // Validate the amount is a valid positive integer
+      if (isNaN(amountInSats) || amountInSats <= 0) {
+        throw new Error(
+          `Invalid inscription amount: ${inscriptionData.required_amount_in_sats}. ` +
+          'Please try recalculating the inscription cost.'
+        );
+      }
+
+      console.log('Sending Bitcoin:', {
+        address: inscriptionData.payment_address,
+        amountInSats,
+        originalValue: inscriptionData.required_amount_in_sats
+      });
+
       const txid = await sendBitcoin(
         inscriptionData.payment_address,
         amountInSats

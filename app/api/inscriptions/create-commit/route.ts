@@ -67,6 +67,33 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    // Validate the response data
+    const { payment_address, required_amount_in_sats, inscription_id } = response.data;
+    
+    if (!payment_address || !required_amount_in_sats) {
+      console.error('Invalid Skrybit API response:', response.data);
+      return NextResponse.json(
+        { error: 'Invalid response from inscription service' },
+        { status: 500 }
+      );
+    }
+
+    // Validate that required_amount_in_sats is a valid number
+    const amountInSats = parseInt(required_amount_in_sats);
+    if (isNaN(amountInSats) || amountInSats <= 0) {
+      console.error('Invalid required_amount_in_sats:', required_amount_in_sats);
+      return NextResponse.json(
+        { error: 'Invalid inscription amount received from service' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Inscription commit created successfully:', {
+      payment_address,
+      required_amount_in_sats,
+      inscription_id
+    });
+
     // Return the response from Skrybit
     return NextResponse.json(response.data);
 
