@@ -227,7 +227,7 @@ export default function Home() {
               className="w-12 h-12 md:w-16 md:h-16 rounded-lg"
             />
             <h1 className="text-4xl md:text-5xl font-bold text-white">
-              Degen Minter
+              Degent Minter
             </h1>
             <img 
               src="/icon_flipped.jpg" 
@@ -282,7 +282,7 @@ export default function Home() {
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>Powered by Skrybit API • UniSat Wallet</p>
+          <p>Powered by <a href="https://skrybit.io">Skrybit API</a> • <a href="https://unisat.io">UniSat Wallet</a></p>
         </div>
       </div>
     </main>
