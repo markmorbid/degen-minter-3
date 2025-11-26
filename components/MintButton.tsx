@@ -95,10 +95,18 @@ export default function MintButton({
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+    <div className="rounded-degent-card border border-degent-border bg-degent-card/50 backdrop-blur-sm p-6 shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
+        <span className="bg-degent-green/10 border border-degent-green/20 icon-square p-3 rounded-degent-button">
+          <i className="fa-solid fa-rocket text-degent-green"></i>
+        </span>
+        <span>It's time to <span className="text-degent-green">Submit your Degent!</span></span>
+      </h2>
+
       {/* Fee Rate Input */}
-      <div className="mb-6">
-        <label className="block text-gray-400 text-sm mb-2">
+      <div className="bg-degent-input/60 border border-degent-border/50 flex flex-wrap gap-2.5 justify-center mb-6 p-4 rounded-degent-card">
+        <label className="flex flex-grow gap-2 items-center text-degent-muted text-md">
+          <i className="fas fa-tachometer-alt text-degent-green text-lg"></i>
           Fee Rate (sats/vbyte)
         </label>
         <input
@@ -114,11 +122,9 @@ export default function MintButton({
           }}
           min="0.1"
           step="0.1"
-          className="w-full bg-gray-900 text-white px-4 py-2 rounded border border-gray-700 focus:border-bitcoin focus:outline-none"
+          className="bg-degent-input border border-degent-border flex-grow focus:border-degent-green focus:ring-1 focus:ring-degent-green outline-none px-5 py-3 rounded-degent-button text-white transition-colors w-full"
         />
-        <p className="text-gray-500 text-xs mt-1">
-          Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
-        </p>
+        <p className="flex-grow mt-1 text-degent-muted text-xs">Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)</p>
       </div>
 
       {/* Mint Button */}
@@ -126,50 +132,45 @@ export default function MintButton({
         onClick={handleMint}
         disabled={!isEnabled}
         className={`
-          w-full font-bold py-4 px-6 rounded-lg text-lg transition-all
+          w-full font-bold py-4 px-6 rounded-degent-button text-lg transition-all flex items-center justify-center gap-2
           ${isEnabled
-            ? 'bg-bitcoin hover:bg-orange-600 text-white cursor-pointer transform hover:scale-105'
-            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+            ? 'bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark cursor-pointer shadow-lg shadow-degent-green/20'
+            : 'bg-degent-input text-degent-muted cursor-not-allowed border border-degent-border'
           }
         `}
       >
-        {isMinting ? '⏳ Minting...' : '🚀 Mint Inscription'}
+        {isMinting ? (
+          <>
+            <i className="fas fa-spinner fa-spin"></i>
+            Minting...
+          </>
+        ) : (
+          <>
+            <i className="fas fa-rocket"></i>
+            Mint Inscription
+          </>
+        )}
       </button>
 
       {!isEnabled && (
-        <p className="mt-3 text-center text-gray-400 text-sm">
+        <p className="flex gap-2 items-center mt-3 text-degent-muted text-sm">
+          <i className="fas fa-info-circle"></i>
           {getDisabledReason()}
         </p>
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
+        <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded-degent-button text-red-200 text-sm flex items-center gap-2">
+          <i className="fas fa-exclamation-circle"></i>
           {error}
         </div>
       )}
 
-      {isCalculating && calculatingFeeRate !== null ? (
-        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
-          <div className="text-bitcoin text-lg animate-pulse">
-            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
-          </div>
-        </div>
-      ) : inscriptionData ? (
-        <div className="mt-4 pt-4 border-t border-gray-700 space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-400">Required Amount:</span>
-            <span className="text-white font-semibold">
-              {parseInt(inscriptionData.required_amount_in_sats).toLocaleString()} sats
-            </span>
-          </div>
-          <div>
-            <p className="text-gray-400 mb-1">Payment Address:</p>
-            <p className="text-white font-mono text-xs bg-gray-900 p-2 rounded break-all">
-              {inscriptionData.payment_address}
-            </p>
-          </div>
-        </div>
-      ) : null}
+      {/* Info Box */}
+      <p className="bg-degent-card/80 border border-degent-border/50 flex flex-row gap-5 items-center justify-center mt-4 p-4 rounded-degent-card text-bitcoin text-sm">
+        <i className="fas fa-info-circle"></i>
+        Once your inscription is confirmed, submit your inscription ID to the Telegram group for inclusion in the official Decentralized Gentlemen Club collection.
+      </p>
     </div>
   );
 }

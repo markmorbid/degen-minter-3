@@ -1,26 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 17, 24, 39;
-  --background-end-rgb: 88, 28, 135;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #0b0b0d;
   min-height: 100vh;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #2efc86;
+  color: #0b0b0d;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .bg-degent-card\/50 {
+    background: rgba(26, 26, 29, 0.5);
+  }
+  
+  .bg-degent-input\/60 {
+    background: rgba(25, 25, 25, 0.6);
+  }
+  
+  .icon-square, .icon-square i {
+    aspect-ratio: 1;
+    line-height: initial;
+    display: grid;
+    place-content: center;
+    align-content: stretch;
+    justify-content: center;
+    align-items: stretch;
+  }
+}
+
+/* Number input spinner styles */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: transparent;
+  cursor: pointer;
+  width: 30px;
+}
+
+input[type=number] {
+  color-scheme: dark;
+  position: relative;
+}
+
+/* Dark gradient fade background */
+.bg-dark-gradient-fade {
+  background: linear-gradient(136deg, #0b0b0d, rgb(15 15 16 / 75%));
 }

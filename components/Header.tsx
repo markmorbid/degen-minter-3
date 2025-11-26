@@ -1,0 +1,195 @@
+'use client';
+
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { connectWallet, isWalletInstalled, getWalletAddress } from '@/lib/wallet';
+
+interface HeaderButtonProps {
+  id?: string;
+  label: string;
+  href?: string;
+  onClick?: () => void;
+  variant?: 'gradient' | 'dark' | 'neon';
+  textColor?: string;
+  target?: '_self' | '_blank';
+  icon?: string;
+}
+
+export function HeaderButton({
+  id,
+  label,
+  href,
+  onClick,
+  variant = 'dark',
+  textColor = 'white',
+  target = '_self',
+  icon,
+}: HeaderButtonProps) {
+  const baseClasses = "flex items-center justify-center gap-2 px-6 py-3 rounded-degent-button font-bold text-sm transition-all duration-300 h-[45px]";
+  
+  const variantClasses = {
+    gradient: "bg-degent-gradient text-degent-dark hover:opacity-90",
+    dark: "bg-degent-card/80 border border-[#404044] text-white hover:bg-degent-border hover:border-white",
+    neon: "bg-degent-green/10 border border-degent-green text-degent-green hover:bg-degent-green/20",
+  };
+
+  const buttonContent = (
+    <>
+      {icon && <i className={icon}></i>}
+      <span className="hidden sm:inline">{label}</span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        id={id}
+        href={href}
+        target={target}
+        rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+        className={`${baseClasses} ${variantClasses[variant]}`}
+      >
+        {buttonContent}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      id={id}
+      onClick={onClick}
+      className={`${baseClasses} ${variantClasses[variant]}`}
+    >
+      {buttonContent}
+    </button>
+  );
+}
+
+export default function Header() {
+  const [address, setAddress] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  useEffect(() => {
+    // Check if wallet is already connected
+    const checkConnection = async () => {
+      const addr = await getWalletAddress();
+      if (addr) {
+        setAddress(addr);
+      }
+    };
+    checkConnection();
+  }, []);
+
+  const handleWalletConnect = async () => {
+    if (!isWalletInstalled()) {
+      alert('UniSat wallet not detected. Please install the UniSat browser extension.');
+      return;
+    }
+
+    setIsConnecting(true);
+    try {
+      const addr = await connectWallet();
+      setAddress(addr);
+      // Scroll to wallet connect section
+      const walletSection = document.getElementById('wallet-connect-section');
+      if (walletSection) {
+        walletSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to connect wallet');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 bg-degent-dark/95 border-b border-degent-border backdrop-blur-sm h-20">
+      <div className="container mx-auto px-5 max-w-[1450px] h-full flex justify-between items-center">
+        {/* Logo Section */}
+        <Link href="https://degent.club" className="flex items-center gap-0 h-full no-underline text-white">
+          <svg 
+            className="w-12 h-12 text-degent-green" 
+            viewBox="0 0 800 800" 
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+          >
+            <g>
+              <path fill="currentColor" d="M140.18,286.46c10.59,6.18,20.69,12.08,30.79,17.97c10,5.83,20.11,11.47,29.97,17.53
+              c18.48,11.35,23.19,31.47,12.03,50.07c-13.1,21.84-26.1,43.73-39.26,65.53c-1.66,2.75-2.02,4.58,0.59,7.14
+              c49.54,48.76,98.97,97.63,148.44,146.46c0.51,0.5,1.11,0.9,2.75,0.89c-1.3-4.61-2.51-9.24-3.91-13.82
+              c-12.31-40.27-24.62-80.53-36.99-120.78c-12.23-39.8-24.53-79.59-36.79-119.38c-1.59-5.16-2.98-10.38-4.73-15.49
+              c-0.94-2.74-0.07-4.06,2.47-4.83c19.62-5.98,39.24-11.97,58.85-17.97c2.65-0.81,4.14-0.31,5.06,2.76
+              c7.3,24.22,14.8,48.38,22.22,72.56c10.04,32.73,20.08,65.47,30.11,98.2c9.44,30.82,18.87,61.65,28.31,92.47
+              c2.97,9.69,5.98,19.37,9.38,30.41c1.15-2.07,1.84-2.93,2.14-3.91c12.49-40.7,24.91-81.41,37.4-122.11
+              c12.76-41.58,25.57-83.14,38.34-124.71c4.26-13.86,8.58-27.7,12.58-41.63c1.18-4.12,3.01-5.01,6.95-3.75
+              c14.25,4.55,28.57,8.9,42.86,13.31c4.42,1.36,8.81,2.85,13.29,3.99c3.5,0.9,4.71,2.09,3.46,6.12
+              c-12.88,41.54-25.48,83.17-38.24,124.75c-12.21,39.81-24.52,79.59-36.78,119.38c-2.18,7.08-4.37,14.15-6.48,21.24
+              c-0.32,1.09-0.27,2.28-0.55,4.87c5.89-5.76,10.81-10.54,15.69-15.35c44.84-44.28,89.65-88.59,134.57-132.79
+              c2.92-2.88,3.41-4.89,1.17-8.58c-13.33-21.88-26.35-43.94-39.48-65.94c-10.59-17.75-5.64-38.27,12.23-48.96
+              c18.27-10.94,36.78-21.47,55.17-32.2c1.84-1.07,3.62-2.25,6.14-3.82c-4.12-5.81-7.8-11.45-11.92-16.75
+              c-9.32-12.01-19.81-22.89-32.57-31.35c-2.32-1.54-2.98-2.73-1.64-5.55c8.67-18.25,17.18-36.57,25.53-54.97
+              c1.72-3.79,3.48-3.77,6.67-1.92c21.85,12.68,39.62,29.9,55.24,49.49c14.41,18.07,26,37.9,35.87,58.75
+              c8.18,17.29,2.66,35.93-13.89,45.81c-18.15,10.83-36.53,21.29-54.8,31.91c-5.28,3.07-5.28,3.09-2.14,8.33
+              c11.56,19.34,23.26,38.6,34.66,58.04c9.63,16.42,7.77,31.63-5.65,45.09c-20.29,20.34-40.83,40.43-61.27,60.62
+              c-53.85,53.18-107.7,106.35-161.54,159.54c-15.83,15.64-31.55,31.38-47.4,46.99c-14.69,14.46-36.02,14.23-50.51-0.17
+              c-34.4-34.2-68.88-68.32-103.38-102.42c-49.43-48.87-98.91-97.69-148.37-146.52c-6.05-5.97-12.17-11.86-18.18-17.87
+              c-13.33-13.34-15.27-29.23-5.57-45.52c11.68-19.63,23.31-39.29,35.18-58.8c2.09-3.44,1.51-4.86-1.81-6.75
+              c-17.43-9.93-34.63-20.26-52.11-30.1c-13.99-7.87-22.58-18.95-20.98-35.5c0.59-6.08,3.35-12.15,6.05-17.78
+              c15.51-32.36,35.65-61.42,63.12-84.83c7.95-6.77,17-12.25,25.5-18.38c3.28-2.36,4.98-1.39,6.58,2.13
+              c8.37,18.39,16.86,36.73,25.52,54.99c1.38,2.91,0.42,3.96-1.82,5.48c-17.68,12.01-31.16,27.97-42.66,45.76
+              C141.23,284.47,140.9,285.14,140.18,286.46z"></path>
+              <path fill="currentColor" d="M601.02,156.64c-0.37,27.94-2.83,54.82-8.26,81.39c-4.47,21.87-26.54,33.27-48.06,25.15
+              c-27.84-10.51-55.73-20.9-83.68-31.1c-2.09-0.76-5.33-0.39-7.25,0.75c-13.92,8.29-28.88,12.45-45.04,11.93
+              c-12.32-0.39-24.8-0.15-36.89-2.15c-8.43-1.39-16.43-5.83-24.39-9.42c-3.3-1.49-5.89-2.23-9.53-0.86
+              c-28.57,10.75-57.14,21.53-85.92,31.71c-19.65,6.95-40.53-5.12-44.77-25.58c-6.8-32.82-10.02-66.05-7.65-99.5
+              c1.46-20.59,4.33-41.13,7.6-61.53c3.54-22.1,27.53-34.47,47.99-25.22c25.57,11.56,51,23.44,76.42,35.35
+              c3.22,1.51,5.53,1.49,8.39-0.71c15.4-11.88,32.96-17.06,52.33-16.55c13.86,0.37,27.81-1,41.42,3.16
+              c9.72,2.98,18.65,7.39,26.59,13.66c2.61,2.06,4.69,2.05,7.54,0.71c25.43-11.89,50.84-23.8,76.4-35.4
+              c21.41-9.72,44.6,3.28,48.89,26.31C598,104.82,600.54,131.03,601.02,156.64z M399.41,175.77c3.7,0,7.41,0.12,11.11-0.03
+              c6.95-0.27,11.19-4.39,11.51-11.33c0.21-4.62,0.22-9.26-0.01-13.88c-0.33-6.65-4.56-10.95-11.21-11.17
+              c-7.24-0.24-14.51-0.24-21.75,0c-6.64,0.22-10.94,4.49-11.3,11.11c-0.26,4.77-0.27,9.58,0.01,14.34c0.4,6.6,4.75,10.65,11.45,10.93
+              C392.62,175.89,396.02,175.77,399.41,175.77z M269.5,135.44c-0.39,1.58-0.86,2.59-0.86,3.6c0.02,13.25-0.01,26.51,0.24,39.76
+              c0.09,4.48,1.29,5.02,5.56,3.41c7.77-2.93,15.53-5.91,23.3-8.84c11.43-4.32,11.43-4.31,10.98-16.35c-0.01-0.15,0.06-0.35-0.01-0.46
+              c-1.11-1.62-1.89-3.96-3.43-4.72c-9.79-4.84-19.74-9.36-29.66-13.94C273.72,137.03,271.75,136.34,269.5,135.44z M530.94,158.62
+              c0.11,0,0.23,0,0.34,0c0-6.18-0.03-12.36,0.01-18.53c0.02-3.71-0.89-5.14-4.9-3.14c-8.13,4.06-16.24,8.39-24.79,11.33
+              c-8.57,2.95-11.92,7.79-10.68,16.72c0.42,3.04,1.08,4.74,3.95,5.78c10.42,3.79,20.81,7.7,31.18,11.63
+              c3.02,1.14,4.86,0.59,4.88-2.96C530.97,172.51,530.94,165.57,530.94,158.62z"></path>
+              <path fill="currentColor" d="M400.42,420.75c12.73,0.33,22.36,9.67,22.07,21.41c-0.29,11.54-10.84,20.9-23.11,20.48
+              c-12.57-0.42-22.4-9.98-22.13-21.53C377.52,429.57,387.92,420.43,400.42,420.75z"></path>
+              <path fill="currentColor" d="M399.82,367.67c-12.38-0.03-22.62-9.59-22.58-21.08c0.04-11.46,10.35-20.97,22.73-20.94
+              c12.43,0.02,22.56,9.51,22.52,21.09C422.45,358.33,412.31,367.69,399.82,367.67z"></path>
+            </g>
+          </svg>
+          <div className="hidden sm:flex items-center h-full pl-5 ml-5 border-l border-degent-border text-3xl font-black leading-none">
+            degent<strong className="text-degent-green">.club</strong>
+          </div>
+        </Link>
+
+        {/* Center Stats Section - Hidden on mobile/tablet */}
+        <div className="hidden xl:flex gap-5 items-center">
+          {/* Stats widgets can be added here if needed */}
+        </div>
+
+        {/* Right Action Buttons */}
+        <div className="flex gap-2.5 items-center">
+          <HeaderButton
+            id="wallet-btn"
+            label={address ? `${address.slice(0, 6)}...${address.slice(-4)}` : isConnecting ? 'Connecting...' : 'Connect Wallet'}
+            onClick={handleWalletConnect}
+            variant="gradient"
+            icon={isConnecting ? "fas fa-spinner fa-spin" : "fas fa-wallet"}
+          />
+          <HeaderButton
+            id="collection-btn"
+            label="Collection"
+            href="https://degent.club/collection/"
+            variant="dark"
+            target="_blank"
+            icon="fas fa-photo-film"
+          />
+        </div>
+      </div>
+    </header>
+  );
+}
+

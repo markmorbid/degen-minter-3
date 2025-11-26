@@ -19,6 +19,15 @@ cd degen-minter
 npm install
 ```
 
+## Environment Setup
+Create a `.env.local` file in the root directory with the following:
+
+```bash
+NEXT_PUBLIC_AUTH_TOKEN=your_skrybit_api_token_here
+```
+
+Get your API token from [Skrybit](https://skrybit.io). This token is required for the inscription API to work.
+
 ## Usage
 To run the application in development mode, use:
 
@@ -27,6 +36,8 @@ npm run dev
 ```
 
 The application will be available at `http://localhost:3000`
+
+**Note:** Make sure you have set up the `NEXT_PUBLIC_AUTH_TOKEN` environment variable before running the app, otherwise inscription calculations will fail.
 
 To build the application for production, use:
 
