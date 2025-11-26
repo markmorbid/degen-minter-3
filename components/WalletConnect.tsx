@@ -61,23 +61,39 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🔗 Connect Wallet</h2>
+    <div className="rounded-degent-card border border-degent-border bg-degent-card/50 backdrop-blur-sm p-6 shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
+        <span className="bg-degent-green/10 border border-degent-green/20 icon-square p-3 rounded-degent-button">
+          <i className="fas fa-link text-degent-green"></i>
+        </span>
+        Connect Wallet
+      </h2>
       
       {!address ? (
         <div>
-          <p className="text-gray-300 mb-4">
+          <p className="text-degent-muted mb-4">
             Connect your UniSat wallet to start minting
           </p>
           <button
             onClick={handleConnect}
             disabled={isConnecting}
-            className="w-full bg-bitcoin hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark font-bold py-3 px-6 rounded-degent-button transition-all duration-200 shadow-lg shadow-degent-green/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isConnecting ? 'Connecting...' : 'Connect UniSat Wallet'}
+            {isConnecting ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+                Connecting...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-wallet"></i>
+                Connect UniSat Wallet
+              </>
+            )}
           </button>
           {error && (
-            <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
+            <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded-degent-button text-red-200 text-sm">
+              <i className="fas fa-exclamation-circle mr-2"></i>
               {error}
             </div>
           )}
@@ -85,15 +101,19 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
       ) : (
         <div>
           <div className="mb-4">
-            <p className="text-gray-400 text-sm mb-1">Connected Address:</p>
-            <p className="text-white font-mono text-sm bg-gray-900 p-3 rounded break-all">
+            <p className="text-degent-muted text-sm mb-1 flex items-center gap-2">
+              <i className="fas fa-check-circle text-degent-green"></i>
+              Connected Address:
+            </p>
+            <p className="text-white font-mono text-sm bg-degent-input border border-degent-border p-3 rounded-degent-button break-all">
               {address}
             </p>
           </div>
           <button
             onClick={handleDisconnect}
-            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+            className="w-full bg-degent-input hover:bg-degent-border border border-degent-border text-white font-semibold py-2 px-4 rounded-degent-button transition-colors"
           >
+            <i className="fas fa-sign-out-alt mr-2"></i>
             Disconnect
           </button>
         </div>
