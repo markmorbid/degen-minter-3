@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { connectWallet, isWalletInstalled, getWalletAddress } from '@/lib/wallet';
+import { useState } from 'react';
 
 interface HeaderButtonProps {
   id?: string;
@@ -87,42 +86,6 @@ export function HeaderButton({
 }
 
 export default function Header() {
-  const [address, setAddress] = useState<string | null>(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-
-  useEffect(() => {
-    // Check if wallet is already connected
-    const checkConnection = async () => {
-      const addr = await getWalletAddress();
-      if (addr) {
-        setAddress(addr);
-      }
-    };
-    checkConnection();
-  }, []);
-
-  const handleWalletConnect = async () => {
-    if (!isWalletInstalled()) {
-      alert('UniSat wallet not detected. Please install the UniSat browser extension.');
-      return;
-    }
-
-    setIsConnecting(true);
-    try {
-      const addr = await connectWallet();
-      setAddress(addr);
-      // Scroll to wallet connect section
-      const walletSection = document.getElementById('wallet-connect-section');
-      if (walletSection) {
-        walletSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    } catch (err: any) {
-      alert(err.message || 'Failed to connect wallet');
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-degent-dark/95 border-b border-degent-border backdrop-blur-sm h-20">
       <div className="container mx-auto px-5 max-w-[1450px] h-full flex justify-between items-center">
@@ -224,4 +187,3 @@ export default function Header() {
     </header>
   );
 }
-
