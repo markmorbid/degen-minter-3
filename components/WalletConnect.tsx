@@ -77,23 +77,25 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
           <button
             onClick={handleConnect}
             disabled={isConnecting}
-            className="w-full bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark font-bold py-3 px-6 rounded-degent-button transition-all duration-200 shadow-lg shadow-degent-green/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="overflow-hidden group relative w-full bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark font-bold py-3 px-6 rounded-degent-button transition-all duration-200 shadow-lg shadow-degent-green/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
+            <span className="absolute inset-0 bg-degent-green translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)]" />
+
             {isConnecting ? (
               <>
-                <i className="fas fa-spinner fa-spin"></i>
-                Connecting...
+                <i className="relative z-10 fas fa-spinner fa-spin"></i>
+                <span className="relative z-10">Connecting...</span>
               </>
             ) : (
               <>
-                <i className="fas fa-wallet"></i>
-                Connect UniSat Wallet
+                <i className="relative z-10 fas fa-wallet"></i>
+                <span className="relative z-10">Connect UniSat Wallet</span>
               </>
             )}
           </button>
           {error && (
             <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded-degent-button text-red-200 text-sm">
-              <i className="fas fa-exclamation-circle mr-2"></i>
+              <i className="relative z-10 fas fa-exclamation-circle mr-2"></i>
               {error}
             </div>
           )}
@@ -101,19 +103,19 @@ export default function WalletConnect({ onConnect, onDisconnect }: WalletConnect
       ) : (
         <div>
           <div className="mb-4">
-            <p className="text-degent-muted text-sm mb-1 flex items-center gap-2">
-              <i className="fas fa-check-circle text-degent-green"></i>
+            <p className="text-degent-muted text-md mb-3 flex items-center gap-2">
+              <i className="relative z-10 fas fa-check-circle text-degent-green"></i>
               Connected Address:
             </p>
-            <p className="text-white font-mono text-sm bg-degent-input border border-degent-border p-3 rounded-degent-button break-all">
-              {address}
+            <p className="bg-degent-input border border-degent-border break-all flex flex-row font-mono gap-2.5 items-center p-4 rounded-degent-button text-degent-green text-sm">
+            <i className="relative z-10 fas fa-wallet"></i>{address}
             </p>
           </div>
           <button
             onClick={handleDisconnect}
-            className="w-full bg-degent-input hover:bg-degent-border border border-degent-border text-white font-semibold py-2 px-4 rounded-degent-button transition-colors"
+            className="w-full bg-degent-input hover:bg-degent-border border border-degent-border text-white font-semibold py-3 px-6 rounded-degent-button transition-colors"
           >
-            <i className="fas fa-sign-out-alt mr-2"></i>
+            <i className="relative z-10 fas fa-sign-out-alt mr-2"></i>
             Disconnect
           </button>
         </div>

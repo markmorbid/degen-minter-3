@@ -208,7 +208,7 @@ export default function FileValidation({
       {compressedFile && (
         <div className="mt-4 pt-4 border-t border-degent-border">
           <p className="text-degent-muted text-sm mb-2 flex items-center gap-2">
-            <span className="p-1 bg-degent-green/20 rounded">
+            <span className="bg-degent-green/20 rounded relative z-10 icon-square p-2">
               <i className="fas fa-eye text-degent-green text-xs"></i>
             </span>
             Preview:
@@ -216,7 +216,7 @@ export default function FileValidation({
           <img 
             src={URL.createObjectURL(compressedFile)} 
             alt="Preview" 
-            className="w-full max-w-md mx-auto rounded-degent-card border border-degent-border/50"
+            className="w-full border border-degent-border/50 object-cover rounded-degent-card w-full"
           />
         </div>
       )}

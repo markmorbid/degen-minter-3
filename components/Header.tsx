@@ -13,6 +13,8 @@ interface HeaderButtonProps {
   textColor?: string;
   target?: '_self' | '_blank';
   icon?: string;
+  tooltip?: string;
+  alt?: string;
 }
 
 export function HeaderButton({
@@ -24,19 +26,33 @@ export function HeaderButton({
   textColor = 'white',
   target = '_self',
   icon,
+  tooltip,
+  alt,
 }: HeaderButtonProps) {
-  const baseClasses = "flex items-center justify-center gap-2 px-6 py-3 rounded-degent-button font-bold text-sm transition-all duration-300 h-[45px]";
+  const baseClasses = "overflow-hidden group relative flex items-center justify-center gap-2 px-6 py-3 rounded-degent-button font-bold text-sm transition-all duration-300 h-[45px]";
   
   const variantClasses = {
     gradient: "bg-degent-gradient text-degent-dark hover:opacity-90",
-    dark: "bg-degent-card/80 border border-[#404044] text-white hover:bg-degent-border hover:border-white",
-    neon: "bg-degent-green/10 border border-degent-green text-degent-green hover:bg-degent-green/20",
+    dark: "bg-degent-card/80 border border-[#404044] text-white hover:bg-degent-border hover:text-degent-dark",
+    neon: "bg-degent-green/10 border border-degent-green text-degent-green hover:bg-degent-green/20 hover:text-degent-dark",
   };
+
+  // Get tooltip text - prioritize tooltip prop, fallback to alt
+  const tooltipText = tooltip || alt;
+  const tooltipClasses = tooltipText ? "tooltip-enabled" : "";
+  
+  // Set data-tooltip if tooltip prop is provided, otherwise use alt attribute
+  const tooltipAttrs: any = {};
+  if (tooltip) {
+    tooltipAttrs['data-tooltip'] = tooltip;
+  } else if (alt) {
+    tooltipAttrs.alt = alt;
+  }
 
   const buttonContent = (
     <>
-      {icon && <i className={icon}></i>}
-      <span className="hidden sm:inline">{label}</span>
+      {icon && <i className={`${icon} relative z-10`}></i>}
+      <span className="relative z-10 flex hidden sm:inline">{label}</span>
     </>
   );
 
@@ -47,8 +63,10 @@ export function HeaderButton({
         href={href}
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-        className={`${baseClasses} ${variantClasses[variant]}`}
-      >
+        className={`${baseClasses} ${variantClasses[variant]} ${tooltipClasses}`}
+        {...tooltipAttrs}
+      >    <span className="absolute inset-0 bg-degent-green translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)]" />
+
         {buttonContent}
       </Link>
     );
@@ -58,8 +76,11 @@ export function HeaderButton({
     <button
       id={id}
       onClick={onClick}
-      className={`${baseClasses} ${variantClasses[variant]}`}
+      className={`overflow-hidden group relative ${baseClasses} ${variantClasses[variant]} ${tooltipClasses}`}
+      {...tooltipAttrs}
     >
+      <span className="absolute inset-0 bg-degent-green translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)]" />
+
       {buttonContent}
     </button>
   );
@@ -172,12 +193,23 @@ export default function Header() {
 
         {/* Right Action Buttons */}
         <div className="flex gap-2.5 items-center">
-          <HeaderButton
+          {/* Wallet button - kept for future use but hidden from UI */}
+          {/* <HeaderButton
             id="wallet-btn"
             label={address ? `${address.slice(0, 6)}...${address.slice(-4)}` : isConnecting ? 'Connecting...' : 'Connect Wallet'}
             onClick={handleWalletConnect}
             variant="gradient"
             icon={isConnecting ? "fas fa-spinner fa-spin" : "fas fa-wallet"}
+          /> */}
+          
+          <HeaderButton
+            id="minting-btn"
+            label="Minting Process"
+            href="https://degent.club/mint/"
+            variant="gradient"
+            target="_blank"
+            icon="fa-solid fa-book"
+            alt="Brief tutorial page to learn how the minting process works"
           />
           <HeaderButton
             id="collection-btn"

@@ -29,7 +29,7 @@ export default function AIInstructions() {
             </span>
             Image Requirements:
           </h3>
-          <ul className="list-none space-y-2">
+          <ul className="list-none ml-2 space-y-2">
             <li className="flex items-start gap-2">
               <i className="fas fa-check text-degent-green text-xs mt-0.5"></i>
               <span>Must be Pepe in a tuxedo</span>
@@ -52,7 +52,7 @@ export default function AIInstructions() {
             </span>
             How to Generate:
           </h3>
-          <ol className="list-none space-y-2">
+          <ol className="list-none ml-2 space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-degent-green font-bold">1.</span>
               <span>Use any AI image generator (ChatGPT, Midjourney, etc.)</span>
@@ -91,7 +91,7 @@ export default function AIInstructions() {
           </div>
           <div className="bg-degent-input/60 border border-degent-border/50 flex flex-col flex-grow gap-4 p-6 rounded-degent-card">
             <img 
-              src="https://media.canva.com/v2/image-resize/format:PNG/height:800/quality:100/uri:ifs%3A%2F%2FM%2Fa403c82b-bcc4-4cea-9cee-fbe7e129f965/watermark:F/width:800?csig=AAAAAAAAAAAAAAAAAAAAAPxEdp0sIUFUjEBwKCaz7N5qYLAf4hXSqrLSlixGodMw&exp=1764136515&osig=AAAAAAAAAAAAAAAAAAAAAGSX9gwdokTxiDx7C7zyo2b3JQ8JeAJtyKiskZGfAP17&signer=media-rpc&x-canva-quality=screen" 
+              src="/template.png" 
               alt="Canva Template" 
               className="border border-degent-green/20 icon-square mx-auto object-cover rounded-degent-card w-48"
               style={{

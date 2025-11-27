@@ -167,8 +167,8 @@ export default function MintButton({
       )}
 
       {/* Info Box */}
-      <p className="bg-degent-card/80 border border-degent-border/50 flex flex-row gap-5 items-center justify-center mt-4 p-4 rounded-degent-card text-bitcoin text-sm">
-        <i className="fas fa-info-circle"></i>
+      <p className="bg-degent-card-orange-grad border flex flex-row gap-3 items-center justify-center mt-4 p-4 rounded-degent-card text-sm">
+        <i className="fas fa-info-circle text-xl"></i>
         Once your inscription is confirmed, submit your inscription ID to the Telegram group for inclusion in the official Decentralized Gentlemen Club collection.
       </p>
     </div>

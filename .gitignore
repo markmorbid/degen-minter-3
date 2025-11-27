@@ -17,6 +17,8 @@
 # misc
 .DS_Store
 *.pem
+social_block.html
+header.html
 
 # debug
 npm-debug.log*
@@ -43,3 +45,10 @@ pnpm-debug.log*
 
 acme/
 conf/
+
+# local backups, templates, and generated images
+*.backup.*
+*.bak
+public/template.png
+image.png
+app/*.backup.*
