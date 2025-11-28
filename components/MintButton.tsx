@@ -102,7 +102,6 @@ export default function MintButton({
         </span>
         <span>It's time to <span className="text-degent-green">Submit your Degent!</span></span>
       </h2>
-
       {/* Fee Rate Input */}
       <div className="bg-degent-input/60 border border-degent-border/50 flex flex-wrap gap-2.5 justify-center mb-6 p-4 rounded-degent-card">
         <label className="flex flex-grow gap-2 items-center text-degent-muted text-md">
@@ -124,7 +123,9 @@ export default function MintButton({
           step="0.1"
           className="bg-degent-input border border-degent-border flex-grow focus:border-degent-green focus:ring-1 focus:ring-degent-green outline-none px-5 py-3 rounded-degent-button text-white transition-colors w-full"
         />
-        <p className="flex-grow mt-1 text-degent-muted text-xs">Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)</p>
+        <p className="text-gray-500 text-xs mt-1">
+          Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
+        </p>
       </div>
 
       {/* Mint Button */}
@@ -132,7 +133,7 @@ export default function MintButton({
         onClick={handleMint}
         disabled={!isEnabled}
         className={`
-          w-full font-bold py-4 px-6 rounded-degent-button text-lg transition-all flex items-center justify-center gap-2
+          w-full font-bold py-4 px-6 rounded-lg text-lg transition-all flex items-center justify-center gap-2
           ${isEnabled
             ? 'bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark cursor-pointer shadow-lg shadow-degent-green/20'
             : 'bg-degent-input text-degent-muted cursor-not-allowed border border-degent-border'
@@ -153,24 +154,39 @@ export default function MintButton({
       </button>
 
       {!isEnabled && (
-        <p className="flex gap-2 items-center mt-3 text-degent-muted text-sm">
-          <i className="fas fa-info-circle"></i>
+        <p className="mt-3 text-center text-gray-400 text-sm">
           {getDisabledReason()}
         </p>
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded-degent-button text-red-200 text-sm flex items-center gap-2">
-          <i className="fas fa-exclamation-circle"></i>
+        <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
           {error}
         </div>
       )}
 
-      {/* Info Box */}
-      <p className="bg-degent-card-orange-grad border flex flex-row gap-3 items-center justify-center mt-4 p-4 rounded-degent-card text-sm">
-        <i className="fas fa-info-circle text-xl"></i>
-        Once your inscription is confirmed, submit your inscription ID to the Telegram group for inclusion in the official Decentralized Gentlemen Club collection.
-      </p>
+      {isCalculating && calculatingFeeRate !== null ? (
+        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+          <div className="text-bitcoin text-lg animate-pulse">
+            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
+          </div>
+        </div>
+      ) : inscriptionData ? (
+        <div className="bg-degent-input/60 border border-degent-border/50 flex flex-wrap gap-2.5 justify-center mb-6 p-4 rounded-degent-card text-smbg-degent-card/50 border border-degent-border/50 flex flex-col flex-wrap gap-2.5 gap-3 justify-center mb-6 mt-3 p-4 rounded-degent-card text-md">
+          <div className="bg-degent-input border border-degent-border break-all flex flex-row font-mono gap-2.5 items-center p-4 rounded-degent-button text-white text-md flex justify-between">
+            <span className="text-gray-400">Required Amount:</span>
+            <span className="text-white font-semibold text-lg">
+              {parseInt(inscriptionData.required_amount_in_sats).toLocaleString()} sats
+            </span>
+          </div>
+          <div className="bg-degent-input border border-degent-border break-all flex flex-row font-mono gap-2.5 items-center p-4 rounded-degent-button text-white text-md flex justify-between">
+            <p className="text-gray-400 mb-1">Payment Address:</p>
+            <p className="text-bitcoin text-sm">
+              {inscriptionData.payment_address}
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
