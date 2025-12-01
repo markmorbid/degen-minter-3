@@ -103,7 +103,7 @@ export default function QualitySlider({
           onMouseUp={handleSliderRelease}
           onTouchEnd={handleSliderRelease}
           disabled={disabled || !originalFile}
-          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="range-primary"
           style={{
             background: `linear-gradient(to right, #F7931A 0%, #F7931A ${quality}%, #374151 ${quality}%, #374151 100%)`,
           }}

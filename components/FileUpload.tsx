@@ -68,9 +68,9 @@ export default function FileUpload({ onFileSelect, disabled }: FileUploadProps) 
   };
 
   return (
-    <div className="rounded-degent-card border border-degent-border bg-degent-card/50 backdrop-blur-sm p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-        <span className="bg-degent-green/10 border border-degent-green/20 icon-square p-3 rounded-degent-button">
+    <div className="degent-card">
+      <h2 className="degent-title h2">
+        <span className="icon-square">
           <i className="fas fa-upload text-degent-green"></i>
         </span>
         Upload Your Image

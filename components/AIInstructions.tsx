@@ -11,69 +11,66 @@ export default function AIInstructions() {
   };
 
   return (
-    <div className="rounded-degent-card border border-degent-border bg-degent-card/50 backdrop-blur-sm p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-        <span className="bg-degent-green/10 border border-degent-green/20 icon-square p-3 rounded-degent-button">
+    <div id="instructions-section" className="degent-card">
+      <h2 className="degent-title h2">
+        <span className="icon-square">
           <i className="fas fa-palette text-degent-green"></i>
         </span>
-        <span>
-          <span className="text-degent-green">Create</span> Your Decentralized Gentleman
-        </span>
+        <span><strong>Create</strong> Your Decentralized Gentleman</span>
       </h2>
       
-      <div className="space-y-4 text-degent-muted">
-        <div className="bg-degent-input/60 border border-degent-border/50 rounded-degent-card p-4">
-          <h3 className="text-xl font-semibold text-degent-green mb-3 flex items-center gap-3">
-            <span className="p-3 bg-degent-green/20 rounded-degent-button icon-square flex items-center justify-center">
+        <div className="degent-card-2 text-degent-muted">
+          <h3 className="degent-title h3">
+            <span className="icon-square">
               <i className="fas fa-list-check text-degent-green text-sm"></i>
             </span>
             Image Requirements:
           </h3>
-          <ul className="list-none ml-2 space-y-2">
-            <li className="flex items-start gap-2">
-              <i className="fas fa-check text-degent-green text-xs mt-0.5"></i>
+          <ul className="degent-list">
+            <li className="item">
+              <i className="fas fa-check"></i>
               <span>Must be Pepe in a tuxedo</span>
             </li>
-            <li className="flex items-start gap-2">
-              <i className="fas fa-vest text-degent-green text-xs mt-0.5"></i>
+            <li className="item">
+              <i className="fas fa-vest"></i>
               <span>Bowtie is <strong className="text-white">mandatory</strong></span>
             </li>
-            <li className="flex items-start gap-2">
-              <i className="fas fa-font text-degent-green text-xs mt-0.5"></i>
+            <li className="item">
+              <i className="fas fa-font"></i>
               <span>Must include text: "DEGEN", "DEGENT", or "REGEN"</span>
             </li>
           </ul>
         </div>
 
-        <div className="bg-degent-input/60 border border-degent-border/50 rounded-degent-card p-4">
-          <h3 className="text-xl font-semibold text-degent-green mb-3 flex items-center gap-3">
-            <span className="p-3 bg-degent-green/20 rounded-degent-button icon-square flex items-center justify-center">
+        <div className="degent-card-2">
+          <h3 className="degent-title h3">
+            <span className="icon-square">
               <i className="fas fa-magic text-degent-green text-sm"></i>
             </span>
             How to Generate:
           </h3>
-          <ol className="list-none ml-2 space-y-2">
-            <li className="flex items-start gap-2">
+          <ol className="degent-list">
+            <li className="item">
               <span className="text-degent-green font-bold">1.</span>
               <span>Use any AI image generator (ChatGPT, Midjourney, etc.)</span>
             </li>
-            <li className="flex items-start gap-2">
+            <li className="item">
               <span className="text-degent-green font-bold">2.</span>
               <span>Download our sample image below as reference</span>
             </li>
-            <li className="flex items-start gap-2">
+            <li className="item">
               <span className="text-degent-green font-bold">3.</span>
               <span>Prompt: "Make one like this"</span>
             </li>
           </ol>
         </div>
 
-        <div className="flex flex-row flex-wrap content-stretch items-stretch justify-between gap-4">
-          <div className="bg-degent-input/60 border border-degent-border/50 flex flex-col flex-grow gap-4 p-6 rounded-degent-card">
+        <div className="degent-row">
+          <div className="degent-card-col half">
             <img 
               src="/Degen.jpg" 
               alt="Sample Degent" 
-              className="border border-degent-green/20 icon-square mx-auto object-cover rounded-degent-card w-48"
+              className="degent-image square w-48"
               style={{
                 boxShadow: '8px 8px 0px 0px #00000040'
               }}
@@ -82,14 +79,14 @@ export default function AIInstructions() {
               <p className="text-sm text-degent-muted mb-4">Sample Degent image for reference</p>
               <button
                 onClick={handleDownload}
-                className="bg-degent-gradient duration-300 flex font-bold gap-2 h-[45px] hover:opacity-90 items-center justify-center p-6 rounded-degent-button text-degent-dark text-md transition-all w-full whitespace-nowrap"
+                className="btn btn-flex btn-gradient btn-curtain w-full"
               >
                 <i className="fas fa-download"></i>
-                Download Sample
+                <span>Download Sample</span>
               </button>
             </div>
           </div>
-          <div className="bg-degent-input/60 border border-degent-border/50 flex flex-col flex-grow gap-4 p-6 rounded-degent-card">
+          <div className="degent-card-col half">
             <img 
               src="/template.png" 
               alt="Canva Template" 
@@ -106,15 +103,14 @@ export default function AIInstructions() {
                 href="https://www.canva.com/design/DAGmbO5kaP4/DSXgcMcw540zRAkTF9M_Lw/edit"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-degent-gradient duration-300 flex font-bold gap-2 h-[45px] hover:opacity-90 items-center justify-center p-6 rounded-degent-button text-degent-dark text-md transition-all w-full whitespace-nowrap"
+                className="btn btn-flex btn-gradient btn-curtain w-full"
               >
                 <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                Open Template
+                <span>Open Template</span>
               </a>
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -29,12 +29,12 @@ export function HeaderButton({
   tooltip,
   alt,
 }: HeaderButtonProps) {
-  const baseClasses = "overflow-hidden group relative flex items-center justify-center gap-2 px-6 py-3 rounded-degent-button font-bold text-sm transition-all duration-300 h-[45px]";
+  const baseClasses = "btn btn-flex btn-curtain";
   
   const variantClasses = {
-    gradient: "bg-degent-gradient text-degent-dark hover:opacity-90",
-    dark: "bg-degent-card/80 border border-[#404044] text-white hover:bg-degent-border hover:text-degent-dark",
-    neon: "bg-degent-green/10 border border-degent-green text-degent-green hover:bg-degent-green/20 hover:text-degent-dark",
+    gradient: "btn-gradient",
+    dark: "btn-dark",
+    neon: "btn-neon",
   };
 
   // Get tooltip text - prioritize tooltip prop, fallback to alt
@@ -45,14 +45,14 @@ export function HeaderButton({
   const tooltipAttrs: any = {};
   if (tooltip) {
     tooltipAttrs['data-tooltip'] = tooltip;
-  } else if (alt) {
+  }/* else if (alt) {
     tooltipAttrs.alt = alt;
-  }
+  }*/
 
   const buttonContent = (
     <>
-      {icon && <i className={`${icon} relative z-10`}></i>}
-      <span className="relative z-10 flex hidden sm:inline">{label}</span>
+      {icon && <i className={`${icon}`}></i>}
+      <span className="hidden sm:inline">{label}</span>
     </>
   );
 
@@ -65,7 +65,7 @@ export function HeaderButton({
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
         className={`${baseClasses} ${variantClasses[variant]} ${tooltipClasses}`}
         {...tooltipAttrs}
-      >    <span className="absolute inset-0 bg-degent-green translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)]" />
+      >    
 
         {buttonContent}
       </Link>
@@ -79,7 +79,7 @@ export function HeaderButton({
       className={`overflow-hidden group relative ${baseClasses} ${variantClasses[variant]} ${tooltipClasses}`}
       {...tooltipAttrs}
     >
-      <span className="absolute inset-0 bg-degent-green translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)]" />
+      
 
       {buttonContent}
     </button>
@@ -124,12 +124,11 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-degent-dark/95 border-b border-degent-border backdrop-blur-sm h-20">
-      <div className="container mx-auto px-5 max-w-[1450px] h-full flex justify-between items-center">
+    <header id="header" className="header fixed">
+      <div className="container">
         {/* Logo Section */}
-        <Link href="https://degent.club" className="flex items-center gap-0 h-full no-underline text-white">
+        <Link href="https://degent.club" className="logo">
           <svg 
-            className="w-12 h-12 text-degent-green" 
             viewBox="0 0 800 800" 
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -181,8 +180,8 @@ export default function Header() {
               c12.43,0.02,22.56,9.51,22.52,21.09C422.45,358.33,412.31,367.69,399.82,367.67z"></path>
             </g>
           </svg>
-          <div className="hidden sm:flex items-center h-full pl-5 ml-5 border-l border-degent-border text-3xl font-black leading-none">
-            degent<strong className="text-degent-green">.club</strong>
+          <div className="sub_text">
+            degent<strong>.club</strong>
           </div>
         </Link>
 
@@ -192,7 +191,7 @@ export default function Header() {
         </div>
 
         {/* Right Action Buttons */}
-        <div className="flex gap-2.5 items-center">
+        <div className="navigation">
           {/* Wallet button - kept for future use but hidden from UI */}
           {/* <HeaderButton
             id="wallet-btn"
@@ -209,7 +208,7 @@ export default function Header() {
             variant="gradient"
             target="_blank"
             icon="fa-solid fa-book"
-            alt="Brief tutorial page to learn how the minting process works"
+            //alt="Brief tutorial page to learn how the minting process works"
           />
           <HeaderButton
             id="collection-btn"

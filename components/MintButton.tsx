@@ -95,16 +95,16 @@ export default function MintButton({
   };
 
   return (
-    <div className="rounded-degent-card border border-degent-border bg-degent-card/50 backdrop-blur-sm p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-        <span className="bg-degent-green/10 border border-degent-green/20 icon-square p-3 rounded-degent-button">
+    <div className="degent-card">
+      <h2 className="degent-title h2">
+        <span className="icon-square">
           <i className="fa-solid fa-rocket text-degent-green"></i>
         </span>
-        <span>It's time to <span className="text-degent-green">Submit your Degent!</span></span>
+        <span>It's time to <strong>Submit your Degent!</strong></span>
       </h2>
       {/* Fee Rate Input */}
-      <div className="bg-degent-input/60 border border-degent-border/50 flex flex-wrap gap-2.5 justify-center mb-6 p-4 rounded-degent-card">
-        <label className="flex flex-grow gap-2 items-center text-degent-muted text-md">
+      <div className="degent-card-2">
+        <label className="label-icon">
           <i className="fas fa-tachometer-alt text-degent-green text-lg"></i>
           Fee Rate (sats/vbyte)
         </label>
@@ -123,20 +123,41 @@ export default function MintButton({
           step="0.1"
           className="bg-degent-input border border-degent-border flex-grow focus:border-degent-green focus:ring-1 focus:ring-degent-green outline-none px-5 py-3 rounded-degent-button text-white transition-colors w-full"
         />
-        <p className="text-gray-500 text-xs mt-1">
-          Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)
-        </p>
+        <p className="info-text"><i className="fa-circle-info fas"></i>Higher fee rates result in faster confirmation times (minimum: 0.1 sat/vb)</p>
       </div>
+
+       {isCalculating && calculatingFeeRate !== null ? (
+        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+          <div className="text-bitcoin text-md animate-pulse">
+             <i className="fas fa-hourglass-start mr-2"></i> Calculating inscription cost at {calculatingFeeRate} sat/vb...
+          </div>
+        </div>
+      ) : inscriptionData ? (
+        <div className="degent-card-2">
+          <div className="degent-field-bg">
+            <span className="text-gray-400">Required Amount:</span>
+            <strong>
+              {parseInt(inscriptionData.required_amount_in_sats).toLocaleString()} sats
+            </strong>
+          </div>
+          <div className="degent-field-bg">
+            <p className="text-gray-400 mb-1">Payment Address:</p>
+            <p className="text-bitcoin text-sm">
+              {inscriptionData.payment_address}
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {/* Mint Button */}
       <button
         onClick={handleMint}
         disabled={!isEnabled}
         className={`
-          w-full font-bold py-4 px-6 rounded-lg text-lg transition-all flex items-center justify-center gap-2
+          w-full btn btn-flex
           ${isEnabled
-            ? 'bg-degent-gradient hover:bg-degent-gradient-hover text-degent-dark cursor-pointer shadow-lg shadow-degent-green/20'
-            : 'bg-degent-input text-degent-muted cursor-not-allowed border border-degent-border'
+            ? 'btn-gradient cursor-pointer'
+            : 'btn-disabled'
           }
         `}
       >
@@ -154,39 +175,17 @@ export default function MintButton({
       </button>
 
       {!isEnabled && (
-        <p className="mt-3 text-center text-gray-400 text-sm">
-          {getDisabledReason()}
-        </p>
+        <p className="info-text">
+          <i className="fa-circle-info fas"></i>
+          <span className="disabled-reason">{getDisabledReason()}</span></p>
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
+        <div className="info-text status error">
+          <i className="fas fa-exclamation-triangle"></i>
           {error}
         </div>
       )}
-
-      {isCalculating && calculatingFeeRate !== null ? (
-        <div className="mt-4 pt-4 border-t border-gray-700 text-center">
-          <div className="text-bitcoin text-lg animate-pulse">
-            ⏳ Calculating inscription cost at {calculatingFeeRate} sat/vb...
-          </div>
-        </div>
-      ) : inscriptionData ? (
-        <div className="bg-degent-input/60 border border-degent-border/50 flex flex-wrap gap-2.5 justify-center mb-6 p-4 rounded-degent-card text-smbg-degent-card/50 border border-degent-border/50 flex flex-col flex-wrap gap-2.5 gap-3 justify-center mb-6 mt-3 p-4 rounded-degent-card text-md">
-          <div className="bg-degent-input border border-degent-border break-all flex flex-row font-mono gap-2.5 items-center p-4 rounded-degent-button text-white text-md flex justify-between">
-            <span className="text-gray-400">Required Amount:</span>
-            <span className="text-white font-semibold text-lg">
-              {parseInt(inscriptionData.required_amount_in_sats).toLocaleString()} sats
-            </span>
-          </div>
-          <div className="bg-degent-input border border-degent-border break-all flex flex-row font-mono gap-2.5 items-center p-4 rounded-degent-button text-white text-md flex justify-between">
-            <p className="text-gray-400 mb-1">Payment Address:</p>
-            <p className="text-bitcoin text-sm">
-              {inscriptionData.payment_address}
-            </p>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

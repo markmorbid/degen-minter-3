@@ -107,81 +107,77 @@ export default function FileValidation({
 
   return (
     <div className={`
-      rounded-degent-card p-6 shadow-lg border-2 transition-colors bg-degent-card/50 backdrop-blur-sm
+      degent-card
       ${isValid ? 'border-degent-green/50' : 'border-red-500/50'}
     `}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <span className={`p-2 rounded-degent-button ${isValid ? 'bg-degent-green/20' : 'bg-red-500/20'}`}>
-            <i className={`fas ${isValid ? 'fa-check-circle' : 'fa-times-circle'} ${isValid ? 'text-degent-green' : 'text-red-500'}`}></i>
-          </span>
-          File Validation
-        </h2>
-        <div className={`text-3xl ${isValid ? 'text-degent-green' : 'text-red-500'}`}>
+    <h2 className="degent-title h2">
+        <span className={`icon-square ${isValid ? 'bg-degent-green/20' : 'bg-red-500/20'}`}>
+          <i className={`fas ${isValid ? 'fa-check-circle' : 'fa-times-circle'} ${isValid ? 'text-degent-green' : 'text-red-500'}`}></i>
+        </span>
+        File Validation
+        <div className={`status ${isValid ? 'text-degent-green' : 'text-red-500'}`}>
           <i className={`fas ${isValid ? 'fa-check' : 'fa-times'}`}></i>
         </div>
-      </div>
-
+      </h2>
+        
       {/* Quality Slider */}
-      <div className="mb-6 pb-6 border-b border-degent-border">
-        <div className="bg-degent-input/60 border border-degent-border/50 rounded-degent-card p-4">
-          <div className="flex justify-between items-center mb-2">
-          <h3 className="text-xl font-semibold text-degent-green mb-3 flex items-center gap-3">
-            <span className="p-3 bg-degent-green/20 rounded-degent-button icon-square flex items-center justify-center">
+      <div className="degent-card-2">
+        <div className="degent-row">
+          <h3 className="degent-title h3">
+            <span className="icon-square">
               <i className="fas fa-sliders-h text-degent-green text-sm"></i>
             </span>
             Quality Slider
           </h3>
-            <span className="text-xl font-bold text-degent-orange">{quality}%</span>
-          </div>
-          
-          <p className="text-degent-muted text-sm mb-3">
-            Adjust quality to compress your image (200kb-400kb required)
-          </p>
-
-          <div className="relative">
-            <input
-              type="range"
-              min="1"
-              max="100"
-              step="1"
-              value={quality}
-              onChange={handleSliderChange}
-              onMouseUp={handleSliderRelease}
-              onTouchEnd={handleSliderRelease}
-              className="w-full h-2 bg-degent-input rounded-lg appearance-none cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, #2efc86 0%, #2efc86 ${quality}%, #2a2a2d ${quality}%, #2a2a2d 100%)`,
-              }}
-            />
-            
-            <div className="flex justify-between text-xs text-degent-muted mt-1">
-              <span>1%</span>
-              <span>100%</span>
-            </div>
-          </div>
-
-          {showCompressing && (
-            <div className="mt-3 text-center text-degent-green animate-pulse flex items-center justify-center gap-2">
-              <i className="fas fa-spinner fa-spin"></i>
-              Compressing...
-            </div>
-          )}
+          <span className="text-xl font-bold text-degent-orange">{quality}%</span>
         </div>
+        
+        <p className="text-degent-muted text-sm mb-3">
+          Adjust quality to compress your image (200kb-400kb required)
+        </p>
+
+        <div className="relative">
+          <input
+            type="range"
+            min="1"
+            max="100"
+            step="1"
+            value={quality}
+            onChange={handleSliderChange}
+            onMouseUp={handleSliderRelease}
+            onTouchEnd={handleSliderRelease}
+            className="w-full h-2 bg-degent-input rounded-lg appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, #2efc86 0%, #2efc86 ${quality}%, #2a2a2d ${quality}%, #2a2a2d 100%)`,
+            }}
+          />
+          
+          <div className="flex justify-between text-xs text-degent-muted mt-1">
+            <span>1%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        {showCompressing && (
+          <div className="mt-3 text-center text-degent-green animate-pulse flex items-center justify-center gap-2">
+            <i className="fas fa-spinner fa-spin"></i>
+            Compressing...
+          </div>
+        )}
       </div>
 
-      <div className="bg-degent-input/50 border border-degent-border/50 rounded-degent-card p-4 space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-degent-muted flex items-center gap-2">
-            <i className="fas fa-file-image text-degent-green text-xs"></i>
+      <div className="degent-card-2 text-sm">
+        <div className="degent-row">
+          <span className="label-icon">
+            <i className="fas fa-file-image text-degent-green"></i>
             Original Size:
           </span>
           <span className="text-white font-semibold">{formatFileSize(originalSize)}</span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <span className="text-degent-muted flex items-center gap-2">
-            <i className="fas fa-compress text-degent-green text-xs"></i>
+        <div className="degent-row">
+          <span className="label-icon">
+            <i className="fas fa-compress text-degent-green"></i>
             Compressed Size:
           </span>
           <span className={`font-semibold ${isValid ? 'text-degent-green' : 'text-red-400'}`}>
@@ -189,16 +185,15 @@ export default function FileValidation({
           </span>
         </div>
 
-        <div className="pt-2 border-t border-degent-border">
-          <div className="flex justify-between items-center text-sm">
+        <div className="degent-row total">
             <span className="text-degent-muted">Valid Range:</span>
             <span className="text-white">200kb - 400kb</span>
-          </div>
+
         </div>
 
         <div className={`
-          mt-4 p-3 rounded-degent-button text-sm font-medium text-center flex items-center justify-center gap-2
-          ${isValid ? 'bg-degent-green/20 text-degent-green border border-degent-green/30' : 'bg-red-900/50 text-red-200 border border-red-500/30'}
+         info-text status
+          ${isValid ? 'success' : 'error'}
         `}>
           <i className={`fas ${isValid ? 'fa-check-circle' : 'fa-exclamation-triangle'}`}></i>
           {getHelperText()}
@@ -206,17 +201,15 @@ export default function FileValidation({
       </div>
 
       {compressedFile && (
-        <div className="mt-4 pt-4 border-t border-degent-border">
-          <p className="text-degent-muted text-sm mb-2 flex items-center gap-2">
-            <span className="bg-degent-green/20 rounded relative z-10 icon-square p-2">
-              <i className="fas fa-eye text-degent-green text-xs"></i>
-            </span>
-            Preview:
+        <div className="degent-block-border-top">
+          <p className="label-icon">
+              <i className="fas fa-eye text-degent-green"></i>
+            Compressed Image Preview:
           </p>
           <img 
             src={URL.createObjectURL(compressedFile)} 
             alt="Preview" 
-            className="w-full border border-degent-border/50 object-cover rounded-degent-card w-full"
+            className="degent-image w-full"
           />
         </div>
       )}

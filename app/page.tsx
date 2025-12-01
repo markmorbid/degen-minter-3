@@ -248,16 +248,15 @@ export default function Home() {
       <HeroSection />
 
       {/* Main Content */}
-      <main className="min-h-screen p-6 md:p-12 relative z-10 bg-dark-gradient-fade">
-        <div className="max-w-6xl mx-auto">
-          {/* Main Content - Single Column */}
-          <div className="max-w-3xl mx-auto space-y-6">
-          <div id="wallet-connect-section">
+      <main className="bg-dark-gradient-fade">
+        {/* Main Content - Single Column */}
+          <div className="container">
+          {/* <div id="wallet-connect-section"> */}
             <WalletConnect 
               onConnect={handleWalletConnect}
               onDisconnect={handleWalletDisconnect}
             />
-          </div>
+          {/* </div> */}
 
           <AIInstructions />
 
@@ -282,15 +281,14 @@ export default function Home() {
             onFeeRateChange={handleFeeRateChange}
           />
 
-          <SocialJoin />
-
             <StatusDisplay
               txid={txid}
             />
-          </div>
 
-        </div>
+            
+          </div>
       </main>
+      <SocialJoin />
     </>
   );
 }
